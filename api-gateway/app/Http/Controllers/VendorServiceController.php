@@ -23,7 +23,7 @@ class VendorServiceController extends Controller
 
             $response = Http::withHeaders([
                 'Authorization' => 'Bearer '.$this->getTokens()->token,
-            ])->get(env('VENDOR_SERVICE_URL').'/corporate/vendor');
+            ])->get(env('PAYMENT_SERVICE_URL').'/corporate/vendor');
 
             $data = [
                 'status' => 'success',
@@ -52,7 +52,7 @@ class VendorServiceController extends Controller
 
             $response = Http::withHeaders([
                 'Authorization' => 'Bearer ' . $this->getTokens()->token,
-            ])->put(env('VENDOR_SERVICE_URL') . '/corporate/vendor/' . $id, $request->all());
+            ])->put(env('PAYMENT_SERVICE_URL') . '/corporate/vendor/' . $id, $request->all());
 
 
             $data = [
@@ -82,7 +82,7 @@ class VendorServiceController extends Controller
 
             $response = Http::withHeaders([
                 'Authorization' => 'Bearer '.$this->getTokens()->token,
-            ])->post(env('VENDOR_SERVICE_URL').'/corporate/vendor', $request->all());
+            ])->post(env('PAYMENT_SERVICE_URL').'/corporate/vendor', $request->all());
 
             $data = [
                 'status' => 'success',
@@ -104,7 +104,7 @@ class VendorServiceController extends Controller
         if (empty($tokens)) {
             $tokens = InterServiceTokens::where('issuer_service_id', env('VENDOR_SERVICE_ID'))->get()->first();
             if (empty($tokens) || $tokens->api_token_expires_at->isPast()) {
-                $request = Http::post(env('VENDOR_SERVICE_URL').'/service-accounts/token', [
+                $request = Http::post(env('PAYMENT_SERVICE_URL').'/service-accounts/token', [
                     'service_id' => env('API_GATEWAY_SERVICE_ID'),
                     'service_secret' => env('API_GATEWAY_SERVICE_SECRET'),
                 ]);
@@ -116,7 +116,7 @@ class VendorServiceController extends Controller
                 }
 
                 $tokens = InterServiceTokens::updateOrCreate(
-                    ['issuer_service_id' => env('VENDOR_SERVICE_ID')],
+                    ['issuer_service_id' => env('PAYMENT_SERVICE_ID')],
                     [
                         'token' => $response['data']['token'],
                         // convert the expires_in to a timestamp to store in the database

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Invoice;
+use App\Models\Vendor;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -23,6 +24,8 @@ class InvoiceController extends Controller
             'payment_terms' => 'required|in:Net 7,Net 14,Net 30',
             'description' => 'nullable|string|max:1000',
         ]);
+
+        $vendor = Vendor::where('corporate_id', $corp_id)->findOrFail($vendor_id);
 
         // Calculate due date based on issue date and payment terms
         $dueDate = Carbon::parse($validated['issue_date'])->addDays(

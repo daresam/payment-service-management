@@ -29,7 +29,7 @@ class InvoiceServiceController extends Controller
                 'overdue' => $request->input('overdue'),
             ], fn ($v) => ! is_null($v) && $v !== '');
 
-            $url = env('INVOICE_SERVICE_URL')."/corporate/{$corp_id}/vendor/{$vendor_id}/invoice";
+            $url = env('PAYMENT_SERVICE_URL')."/corporate/{$corp_id}/vendor/{$vendor_id}/invoice";
             $response = Http::withHeaders([
                 'Authorization' => "Bearer  $tokens->token",
             ])->get($url, $queryParams);
@@ -61,7 +61,7 @@ class InvoiceServiceController extends Controller
 
             $response = Http::withHeaders([
                 'Authorization' => 'Bearer '.$this->getTokens()->token,
-            ])->post(env('INVOICE_SERVICE_URL').'/corporate/'.$corp_id.'/vendor/'.$vendor_id.'/invoice', $request->all());
+            ])->post(env('PAYMENT_SERVICE_URL').'/corporate/'.$corp_id.'/vendor/'.$vendor_id.'/invoice', $request->all());
 
             $data = [
                 'status' => 'success',
@@ -90,7 +90,7 @@ class InvoiceServiceController extends Controller
 
             $response = Http::withHeaders([
                 'Authorization' => 'Bearer '.$this->getTokens()->token,
-            ])->post(env('INVOICE_SERVICE_URL').'/corporate/'.$corp_id.'/invoices/bulk', $request->all());
+            ])->post(env('PAYMENT_SERVICE_URL').'/corporate/'.$corp_id.'/invoices/bulk', $request->all());
 
             $data = [
                 'status' => 'success',
@@ -119,7 +119,7 @@ class InvoiceServiceController extends Controller
 
             $response = Http::withHeaders([
                 'Authorization' => 'Bearer '.$this->getTokens()->token,
-            ])->put(env('INVOICE_SERVICE_URL').'/corporate/'.$corp_id.'/vendor/'.$vendor_id.'/invoice/'.$invoice_id, $request->all());
+            ])->put(env('PAYMENT_SERVICE_URL').'/corporate/'.$corp_id.'/vendor/'.$vendor_id.'/invoice/'.$invoice_id, $request->all());
 
 
             $dataResponse = $response->json();
@@ -154,7 +154,7 @@ class InvoiceServiceController extends Controller
 
             $response = Http::withHeaders([
                 'Authorization' => 'Bearer '.$this->getTokens()->token,
-            ])->get(env('INVOICE_SERVICE_URL').'/corporate/'.$corp_id.'/vendor/'.$vendor_id.'/invoice/'.$invoice_id);
+            ])->get(env('PAYMENT_SERVICE_URL').'/corporate/'.$corp_id.'/vendor/'.$vendor_id.'/invoice/'.$invoice_id);
 
             $data = [
                 'status' => 'success',
@@ -174,9 +174,9 @@ class InvoiceServiceController extends Controller
     {
         $tokens = Cache::get('inter_service_token_invoice');
         if (empty($tokens)) {
-            $tokens = InterServiceTokens::where('issuer_service_id', env('INVOICE_SERVICE_ID'))->get()->first();
+            $tokens = InterServiceTokens::where('issuer_service_id', env('PAYMENT_SERVICE_ID'))->get()->first();
             if (empty($tokens) || $tokens->api_token_expires_at->isPast()) {
-                $request = Http::post(env('INVOICE_SERVICE_URL').'/service-accounts/token', [
+                $request = Http::post(env('PAYMENT_SERVICE_URL').'/service-accounts/token', [
                     'service_id' => env('API_GATEWAY_SERVICE_ID'),
                     'service_secret' => env('API_GATEWAY_SERVICE_SECRET'),
                 ]);
@@ -188,7 +188,7 @@ class InvoiceServiceController extends Controller
                 }
 
                 $tokens = InterServiceTokens::updateOrCreate(
-                    ['issuer_service_id' => env('INVOICE_SERVICE_ID')],
+                    ['issuer_service_id' => env('PAYMENT_SERVICE_ID')],
                     [
                         'token' => $response['data']['token'],
                         // convert the expires_in to a timestamp to store in the database
