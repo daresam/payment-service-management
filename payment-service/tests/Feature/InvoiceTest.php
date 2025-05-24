@@ -11,6 +11,23 @@ class InvoiceTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        
+        // Create vendors with IDs 1 and 2
+        // Using corporate_id=1 as default value since Corporate belongs to different microservice
+        Vendor::factory()->create([
+            'id' => 1,
+            'corporate_id' => 1,
+        ]);
+        
+        Vendor::factory()->create([
+            'id' => 2,
+            'corporate_id' => 1,
+        ]);
+    }
+
     
     public function test_it_can_create_an_invoice_with_payment_terms()
     {
