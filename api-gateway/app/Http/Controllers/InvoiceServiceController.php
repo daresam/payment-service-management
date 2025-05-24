@@ -67,7 +67,7 @@ class InvoiceServiceController extends Controller
                 'status' => 'success',
                 'message' => 'Invoice created successfully',
                 'data' => [
-                    'invoice' => $response->json()['data'],
+                    'invoice' => $response->json(),
                 ],
             ];
 

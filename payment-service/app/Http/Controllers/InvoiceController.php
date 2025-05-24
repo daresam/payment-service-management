@@ -25,7 +25,8 @@ class InvoiceController extends Controller
             'description' => 'nullable|string|max:1000',
         ]);
 
-        $vendor = Vendor::where('corporate_id', $corp_id)->findOrFail($vendor_id);
+
+        // $vendor = Vendor::where('corporate_id', $corp_id)->findOrFail($vendor_id);
 
         // Calculate due date based on issue date and payment terms
         $dueDate = Carbon::parse($validated['issue_date'])->addDays(
